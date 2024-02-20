@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net.Http;
 using System.Text.Json;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
@@ -97,6 +98,7 @@ namespace Rig
         public object? pauseOnActive { get; set; }
     }    
 }
+
 namespace AppJSON
 {
     public class Monero
@@ -142,8 +144,12 @@ namespace AppJSON
         public APIs? APIs { get; set; }
     }
 }
+
+
+
 class Program
 {
+
     static class ConfigJSON
     {
         private readonly static string rigJsonPath = 
@@ -157,9 +163,32 @@ class Program
         }
         public static void SerializeAndWrite<T>(int n, T instance)
         {
-            File.WriteAllText(paths[n], JsonSerializer.Serialize(instance));
+            var option = new JsonSerializerOptions { WriteIndented = true };
+            File.WriteAllText(paths[n], JsonSerializer.Serialize(instance, option));
         }
     }
+    
+    static class Http
+    {
+        public static string Get(string url)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage response = client.GetAsync(url).Result;
+                    response.EnsureSuccessStatusCode(); 
+                    return response.Content.ReadAsStringAsync().Result;
+                }
+                catch (HttpRequestException e)
+                {
+                    Console.WriteLine($"Error: {e.Message}");
+                    throw;
+                }
+            }
+        }
+    }
+    
     static void Main(string[] args)
     {
         Console.WriteLine("Hello, World!");
