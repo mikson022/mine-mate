@@ -1,0 +1,72 @@
+{
+    "autosave": true,
+    "background": false,
+    "colors": true,
+    "title": "Contributor",
+    "randomx": {
+        "init": -1,
+        "init-avx2": -1,
+        "mode": "auto",
+        "1gb-pages": false,
+        "rdmsr": true,
+        "wrmsr": true,
+        "cache_qos": false,
+        "numa": true,
+        "scratchpad_prefetch_mode": 1
+    },
+    "cpu": {
+        "enabled": true,
+        "huge-pages": true,
+        "huge-pages-jit": false,
+        "hw-aes": null,
+        "priority": null,
+        "memory-pool": false,
+        "yield": true,
+        "asm": true,
+        "argon2-impl": null,
+        "rx": [
+            [
+                4,
+                0
+            ],
+            [
+                1,
+                1
+            ]
+        ]
+    },
+    "log-file": null,
+    "donate-level": 0,
+    "donate-over-proxy": 1,
+    "pools": [
+        {
+            "algo": null,
+            "coin": null,
+            "url": "mine.monerod.org:5555",
+            "user": "YourWallet",
+            "pass": "You",
+            "rig_id": null,
+            "nicehash": false,
+            "keepalive": true,
+            "enabled": true,
+            "tls": false,
+            "sni": false,
+            "tls-fingerprint": null,
+            "daemon": false,
+            "socks5": null,
+            "self-select": null,
+            "submit-to-origin": false
+        }
+    ],
+    "retries": 10,
+    "retry-pause": 5,
+    "print-time": 30,
+    "health-print-time": 120,
+    "dmi": true,
+    "syslog": false,
+    "userAgent": null,
+    "verbose": 1,
+    "watch": true,
+    "pause-on-battery": false,
+    "pause-on-active": false
+}
