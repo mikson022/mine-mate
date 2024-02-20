@@ -97,8 +97,69 @@ namespace Rig
         public object? pauseOnActive { get; set; }
     }    
 }
+namespace AppJSON
+{
+    public class Monero
+    {
+        public double usd { get; set; }
+        public double eur { get; set; }
+        public double gbp { get; set; }
+        public double chf { get; set; }
+        public double pln { get; set; }
+        public double nok { get; set; }
+        public double tryC { get; set; }
+        public double rub { get; set; }
+    }
+    public class Nano
+    {
+        public double usd { get; set; }
+        public double eur { get; set; }
+        public double gbp { get; set; }
+        public double chf { get; set; }
+        public double pln { get; set; }
+        public double nok { get; set; }
+        public double tryC { get; set; }
+        public double rub { get; set; }
+    }
+    public class Response
+    {
+        public Monero? monero { get; set; }
+        public Nano? nano { get; set; }
+    }
+    public class CoingeckoCom
+    {
+        public string? request { get; set; }
+        public Response? response { get; set; }
+    }
+    public class APIs
+    {
+        public IList<string>? monerodorg { get; set; }
+        public CoingeckoCom? coingeckocom { get; set; }
+    }
+    public class App
+    {
+        public IList<string>? addresses { get; set; }
+        public APIs? APIs { get; set; }
+    }
+}
 class Program
 {
+    static class ConfigJSON
+    {
+        private readonly static string rigJsonPath = 
+        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.Combine("config", "config.json"));
+        private readonly static string mineMateJson = 
+        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.Combine("app.json"));
+        private readonly static string[] paths = {rigJsonPath, mineMateJson};
+        public static T ReadAndDeserialize<T>(int n) 
+        { 
+            return JsonSerializer.Deserialize<T>(File.ReadAllText(paths[n]))!;   
+        }
+        public static void SerializeAndWrite<T>(int n, T instance)
+        {
+            File.WriteAllText(paths[n], JsonSerializer.Serialize(instance));
+        }
+    }
     static void Main(string[] args)
     {
         Console.WriteLine("Hello, World!");

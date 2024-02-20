@@ -1,0 +1,50 @@
+{
+    "addresses": 
+    [
+        "88R9XuUmU7sDUdN63fKw2HjC3xJ3tgxUBAjDzRCC2NNeHA2u3hkLr57894hrJGKMGag5hpvt6fBzEPgkEnFYsNGt5pgBg3u",
+        "86A1LVfYyWyM7g8oSuSkYecRuHX2P2Nhw6MHSSFxQVWKUYeazwiUPdjLSRtphBWuZbHjSvPdgrP2VWQZWKP5sC86PFtFb6u"
+    ],
+    "APIs": 
+    {
+        "monerodorg": 
+        [
+            "https://np-api.monerod.org/network/stats",
+            "https://np-api.monerod.org/pool/stats",
+            "https://np-api.monerod.org/pool/blocks",
+            "https://np-api.monerod.org/pool/payments",
+
+            "https://np-api.monerod.org/miner//stats",
+            "https://np-api.monerod.org/miner//stats/allworkers",
+            "https://np-api.monerod.org/miner//identifiers",
+            "https://np-api.monerod.org/miner//payments",
+            "https://np-api.monerod.org/miner//block_payments"
+        ],
+        "coingeckocom": 
+        {
+            "request": "https://api.coingecko.com/api/v3/simple/price?ids=monero%2Cnano&vs_currencies=usd%2Ceur%2Cgbp%2Cchf%2Cpln%2Cnok%2Ctry%2Crub%2C&precision=8&x_cg_demo_api_key=YOUR_API_KEY",
+            "response": 
+            {
+                "monero": {
+                  "usd": 119.45322162,
+                  "eur": 110.54882012,
+                  "gbp": 94.6728897,
+                  "chf": 105.25417553,
+                  "pln": 477.90904633,
+                  "nok": 1251.8291485,
+                  "tryC": 3691.55823145,
+                  "rub": 11050.25176648
+                },
+                "nano": {
+                  "usd": 1.32479087,
+                  "eur": 1.22603698,
+                  "gbp": 1.04996565,
+                  "chf": 1.16731695,
+                  "pln": 5.30022993,
+                  "nok": 13.88335787,
+                  "tryC": 40.94106938,
+                  "rub": 122.55234669
+                }
+            }
+        } 
+    }
+}
