@@ -1,50 +1,201 @@
 {
-    "addresses": 
-    [
-        "88R9XuUmU7sDUdN63fKw2HjC3xJ3tgxUBAjDzRCC2NNeHA2u3hkLr57894hrJGKMGag5hpvt6fBzEPgkEnFYsNGt5pgBg3u",
-        "86A1LVfYyWyM7g8oSuSkYecRuHX2P2Nhw6MHSSFxQVWKUYeazwiUPdjLSRtphBWuZbHjSvPdgrP2VWQZWKP5sC86PFtFb6u"
+    "addresses": [
+      "88R9XuUmU7sDUdN63fKw2HjC3xJ3tgxUBAjDzRCC2NNeHA2u3hkLr57894hrJGKMGag5hpvt6fBzEPgkEnFYsNGt5pgBg3u",
+      "86A1LVfYyWyM7g8oSuSkYecRuHX2P2Nhw6MHSSFxQVWKUYeazwiUPdjLSRtphBWuZbHjSvPdgrP2VWQZWKP5sC86PFtFb6u"
     ],
-    "APIs": 
-    {
-        "monerodorg": 
-        [
-            "https://np-api.monerod.org/network/stats",
-            "https://np-api.monerod.org/pool/stats",
-            "https://np-api.monerod.org/pool/blocks",
-            "https://np-api.monerod.org/pool/payments",
-
-            "https://np-api.monerod.org/miner//stats",
-            "https://np-api.monerod.org/miner//stats/allworkers",
-            "https://np-api.monerod.org/miner//identifiers",
-            "https://np-api.monerod.org/miner//payments",
-            "https://np-api.monerod.org/miner//block_payments"
-        ],
-        "coingeckocom": 
-        {
-            "request": "https://api.coingecko.com/api/v3/simple/price?ids=monero%2Cnano&vs_currencies=usd%2Ceur%2Cgbp%2Cchf%2Cpln%2Cnok%2Ctry%2Crub%2C&precision=8&x_cg_demo_api_key=YOUR_API_KEY",
-            "response": 
-            {
-                "monero": {
-                  "usd": 119.45322162,
-                  "eur": 110.54882012,
-                  "gbp": 94.6728897,
-                  "chf": 105.25417553,
-                  "pln": 477.90904633,
-                  "nok": 1251.8291485,
-                  "tryC": 3691.55823145,
-                  "rub": 11050.25176648
+    "APIs": {
+      "monerodorg": {
+         "request": [
+          "https://np-api.monerod.org/network/stats",
+          "https://np-api.monerod.org/pool/stats",
+          "https://np-api.monerod.org/pool/blocks",
+          "https://np-api.monerod.org/pool/payments",
+          "https://np-api.monerod.org/miner//stats",
+          "https://np-api.monerod.org/miner//stats/allworkers",
+          "https://np-api.monerod.org/miner//identifiers",
+          "https://np-api.monerod.org/miner//payments",
+          "https://np-api.monerod.org/miner//block_payments"
+         ],
+         "response": {
+            "networkStats":{
+              "difficulty": 261656026872,
+              "hash": "5e9d069d56d9c651801bf247c8a95850c5054cd60e9e95a57078931a912858ec",
+              "main_height": 3089096,
+              "height": 3089096,
+              "value": 600362800000,
+              "ts": 1708522460
+            },
+            "poolStats":{
+              "pool_list": [
+                "pplns"
+              ],
+              "pool_statistics": {
+                "hashRate": 1327990.8716666666,
+                "miners": 130,
+                "totalHashes": 459850908866602,
+                "lastBlockFoundTime": 1707801742,
+                "lastBlockFound": 3083110,
+                "totalBlocksFound": 1388,
+                "totalMinersPaid": 1101,
+                "totalPayments": 2758,
+                "roundHashes": 955296308825.1272,
+                "totalAltBlocksFound": 0,
+                "altBlocksFound": {},
+                "activePort": 18081,
+                "activePorts": [],
+                "activePortProfit": 0,
+                "coinProfit": {},
+                "coinComment": {},
+                "minBlockRewards": {
+                  "18081": 0
                 },
-                "nano": {
-                  "usd": 1.32479087,
-                  "eur": 1.22603698,
-                  "gbp": 1.04996565,
-                  "chf": 1.16731695,
-                  "pln": 5.30022993,
-                  "nok": 13.88335787,
-                  "tryC": 40.94106938,
-                  "rub": 122.55234669
+                "pending": 0,
+                "price": {
+                  "btc": 0.002315393704038018,
+                  "usd": 118.25527756108072,
+                  "eur": 109.4496348280501
+                },
+                "currentEfforts": {
+                  "18081": 955296308825.1272
+                },
+                "pplnsPortShares": {
+                  "18081": 1
+                },
+                "pplnsWindowTime": 397255.517,
+                "portHash": {
+                  "18081": 1327992.0103385416
+                },
+                "portMinerCount": {
+                  "18081": 130
+                },
+                "portCoinAlgo": {
+                  "18081": "rx/0"
                 }
-            }
-        } 
+              },
+              "last_payment": 1707812274
+            },
+            "poolBlocks":[
+              {
+                "ts": 1707801742453,
+                "hash": "55eaeb50154b3ee7fd5145e8f28e70603d7bac67841ec97189bff5e2879fe678",
+                "diff": 263389816747,
+                "shares": 187812396884,
+                "height": 3083110,
+                "valid": true,
+                "unlocked": true,
+                "pool_type": "pplns",
+                "value": 607477320000
+              },
+              {
+                "ts": 1707660895671,
+                "hash": "64db9e8a1b48929e209527b4af836291b4894a042484f77e7c66ff677ee8b9bd",
+                "diff": 258891724971,
+                "shares": 96412568221,
+                "height": 3081919,
+                "valid": true,
+                "unlocked": true,
+                "pool_type": "pplns",
+                "value": 610118100000
+              },
+              {
+                "ts": 1707589190501,
+                "hash": "688d05178c1d0b55f9c5a9c9f80b78fe5317f82fc858a40a904f04d4b1428f2e",
+                "diff": 263323612188,
+                "shares": 32139563015,
+                "height": 3081347,
+                "valid": true,
+                "unlocked": true,
+                "pool_type": "pplns",
+                "value": 600921000000
+              }
+            ],
+            "poolPayments":[
+              {
+                "id": 2758,
+                "hash": "d8c33e3c91dac7aa28ca36e9b15bacb48fba8352bd3950a6b99a234e6e2feb39",
+                "mixins": 10,
+                "payees": 15,
+                "fee": 134240000,
+                "value": 180594000000,
+                "ts": 1707812274000,
+                "pool_type": "pplns"
+              },
+              {
+                "id": 2757,
+                "hash": "b97f8670fed9e5dd6dc0ffdaedf7aaac9f3f6aa5f3fdf89c3028bc68fcb9c93f",
+                "mixins": 10,
+                "payees": 15,
+                "fee": 134100000,
+                "value": 485478000000,
+                "ts": 1707812273000,
+                "pool_type": "pplns"
+              },
+              {
+                "id": 2756,
+                "hash": "481c3c5f8351d9c148669201685b9ca60f64a1969daf0807cde4948579895363",
+                "mixins": 10,
+                "payees": 12,
+                "fee": 141560000,
+                "value": 28328000000,
+                "ts": 1707812272000,
+                "pool_type": "pplns"
+              }
+            ],
+            "minerStats":{
+              "hash": 791.478642578125,
+              "hash2": 791.4716666666667,
+              "identifier": "global",
+              "lastHash": 1708522684,
+              "totalHashes": 7031492200.397465,
+              "validShares": 172294,
+              "invalidShares": 97,
+              "amtPaid": 11056000000,
+              "amtDue": 4850131468,
+              "txnCount": 1
+            },
+            "minerStatsAllworkers":{
+              "global": {
+                "lts": 1708523566,
+                "identifer": "global",
+                "hash": 726.216884765625,
+                "hash2": 726.2116666666667,
+                "totalHash": 7032186558.182621,
+                "validShares": 172346,
+                "invalidShares": 97
+              },
+              "FRA": {
+                "lts": 1708523566,
+                "identifer": "FRA",
+                "hash": 409.55021809895834,
+                "hash2": 409.545,
+                "totalHash": 1954557097.8946152,
+                "validShares": 47691,
+                "invalidShares": 1
+              },
+              "Main": {
+                "lts": 1708523566,
+                "identifer": "Main",
+                "hash": 316.6666666666667,
+                "hash2": 316.6666666666667,
+                "totalHash": 2060764318.2523594,
+                "validShares": 76455,
+                "invalidShares": 91
+              }
+            },
+            "minerIdentifiers":[
+              "FRA",
+              "Main"
+            ],
+            "minerPayments":[
+              {
+                "pt": "pplns",
+                "ts": 1707560272,
+                "amount": 11056000000,
+                "txnHash": "e9db749cfe32306593b9c39632331c74161362bf538294369d3ec344c23da8ac",
+                "mixin": 10
+              }
+            ]
+         }
+      }
     }
-}
+  }
