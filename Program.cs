@@ -150,9 +150,9 @@ namespace AppJSON
     }
     public class PoolStatistics
     {
-        public double hashRate { get; set; }
+        public decimal hashRate { get; set; }
         public int miners { get; set; }
-        public long totalHashes { get; set; }
+        public decimal totalHashes { get; set; }
         public int lastBlockFoundTime { get; set; }
         public int lastBlockFound { get; set; }
         public int totalBlocksFound { get; set; }
@@ -247,17 +247,17 @@ namespace AppJSON
         public string? txnHash { get; set; }
         public int mixin { get; set; }
     }
-    public class Response
-    {
-        public NetworkStats? networkStats { get; set; }
-        public IDictionary<string, PoolBlock>? poolBlocks { get; set; } 
-        public IList<string>? minerIdentifiers { get; set; } 
-        public PoolStats? poolStats { get; set; }
-        public IList<PoolPayment>? poolPayments { get; set; }
-        public MinerStats? minerStats { get; set; }
-        public MinerStatsAllworkers? minerStatsAllworkers { get; set; }
-        public IList<MinerPayment>? minerPayments { get; set; }
-    }
+    public class Response
+    {
+        public NetworkStats? networkStats { get; set; }
+        public List<PoolBlock>? poolBlocks { get; set; }
+        public IList<string>? minerIdentifiers { get; set; }
+        public PoolStats? poolStats { get; set; }
+        public IList<PoolPayment>? poolPayments { get; set; }
+        public MinerStats? minerStats { get; set; }
+        public MinerStatsAllworkers? minerStatsAllworkers { get; set; }
+        public IList<MinerPayment>? minerPayments { get; set; }
+    }
     public class Monerodorg
     {
         public IList<string>? request { get; set; }
@@ -318,8 +318,37 @@ class Program
         }
     }
     
+    static class Update
+    {
+        public static void GeneralStats(AppJSON.App mainApp)
+        {
+            mainApp = ConfigJSON.ReadAndDeserialize<AppJSON.App>(1);
+
+            string responseJsonNetStat = Http.Get(mainApp.APIs!.monerodorg!.request![0]); //network/stats request
+            string responseJsonPoolStat = Http.Get(mainApp.APIs!.monerodorg!.request![1]); //pool/stats request
+            string responseJsonPoolBlock = Http.Get(mainApp.APIs!.monerodorg!.request![2]); //pool/block request
+            string responseJsonPoolPay = Http.Get(mainApp.APIs!.monerodorg!.request![3]); //pool/payment request
+
+            AppJSON.NetworkStats responseDataNetStat = JsonSerializer.Deserialize<AppJSON.NetworkStats>(responseJsonNetStat)!; 
+            AppJSON.PoolStats responseDataPoolStat = JsonSerializer.Deserialize<AppJSON.PoolStats>(responseJsonPoolStat)!; 
+            List<AppJSON.PoolBlock> responseDataPoolBlock = JsonSerializer.Deserialize<List<AppJSON.PoolBlock>>(responseJsonPoolBlock)!; 
+            List<AppJSON.PoolPayment> responseDataPoolPay = JsonSerializer.Deserialize<List<AppJSON.PoolPayment>>(responseJsonPoolPay)!; 
+
+            mainApp.APIs.monerodorg.response!.networkStats = responseDataNetStat;
+            mainApp.APIs.monerodorg.response!.poolStats = responseDataPoolStat;
+            mainApp.APIs.monerodorg.response!.poolBlocks = responseDataPoolBlock;
+            mainApp.APIs.monerodorg.response!.poolPayments = responseDataPoolPay;
+
+            ConfigJSON.SerializeAndWrite(1, mainApp);
+        }
+        
+    }
     static void Main(string[] args)
     {
+        AppJSON.App mainApp = new AppJSON.App();
+
+        Update.GeneralStats(mainApp); 
+
         Console.WriteLine("Hello, World!");
     }
 }
