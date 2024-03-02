@@ -280,6 +280,70 @@ namespace AppJSON
 
 class Program
 {
+    static class Menu
+    {
+        public static void General()
+        {
+            bool exit = false;
+            while (!exit)
+            {
+                Display.WithDelayAndColor("\nGeneral Menu\n", Vars.primaryColor);
+                
+                Display.WithDelayAndColor("setup (g)uided", Vars.primaryColor); // guided setup of app.json and config.json
+
+
+                Display.WithDelayAndColor("monero (n)etwork", Vars.primaryColor); // networkStats
+                Display.WithDelayAndColor("pool (s)ummary", Vars.primaryColor); // poolStats, poolPayments, poolBlocks
+                
+                Display.WithDelayAndColor("your (w)orkers", Vars.primaryColor); // minerIdentifiers, minerStatsAllworkers
+                Display.WithDelayAndColor("your (m)iner", Vars.primaryColor);   // minerStats
+                Display.WithDelayAndColor("your (r)ewards", Vars.primaryColor); // minerPayments, minerBlockPayments
+
+                Display.WithDelayAndColor("market (c)ondition/(c)alculations", Vars.primaryColor);
+
+                Display.WithDelayAndColor("data (u)pdate", Vars.primaryColor);
+               
+
+                Display.WithDelayAndColor("close, (e)xit", Vars.primaryColor);
+
+                ConsoleKeyInfo keyInfo = Console.ReadKey(true); 
+                switch (keyInfo.KeyChar)
+                {
+                    case 'g':
+                        //
+                        Console.ReadKey();
+                        break;
+                    case 'n':
+                        MoneroNetwork();
+                        Console.ReadKey();
+                        break;
+                    case 'e':
+                        exit = true;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option. Try again");
+                        Console.ReadKey();
+                        break;
+                }
+            }
+        }
+        private static void MoneroNetwork()
+        {
+            Display.WithDelayAndColor(Vars.networkTitle, Vars.secondaryColor, false, 0);
+            Vars.mainApp = ConfigJSON.ReadAndDeserialize<AppJSON.App>(1);
+            Display.WithDelayAndColor("Difficulty: " + Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.difficulty, Vars.secondaryColor);
+            Display.WithDelayAndColor("Block Height: " + Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.main_height, Vars.secondaryColor);
+            Display.WithDelayAndColor("Hash: " + Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.hash, Vars.secondaryColor);
+            Display.WithDelayAndColor("Reward: " + "0." + Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.value, Vars.secondaryColor);
+            Display.WithDelayAndColor("Time Stamp: " + ConvertUnixTimestamp(Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.ts) + " GMT+0000", Vars.secondaryColor);
+            ConfigJSON.SerializeAndWrite(1, Vars.mainApp);
+        }
+        private static DateTime ConvertUnixTimestamp(long timestamp)
+        {
+            DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(timestamp);
+            return dateTimeOffset.UtcDateTime;
+        } 
+    }
     static class Vars
     {
         public static AppJSON.App mainApp = new AppJSON.App();
@@ -317,7 +381,6 @@ class Program
                 }
             }
         }
-
         private static string GenerateDefaultConfigContent()
         {
             return @"{
@@ -446,6 +509,14 @@ class Program
    \ \__\    \ \__\ \_______\ \__\\ \__\ \_______\ \__\\ _\\ \_______\ \_______\\__\ \_______\ \__\\ _\\ \_______\
     \|__|     \|__|\|_______|\|__| \|__|\|_______|\|__|\|__|\|_______|\|_______\|__|\|_______|\|__|\|__|\|_______|
 ";
+        public static string networkTitle = @"
+ ___   __    ______   _________  __ __ __   ______   ______    ___   ___    
+/__/\ /__/\ /_____/\ /________/\/_//_//_/\ /_____/\ /_____/\  /___/\/__/\   
+\::\_\\  \ \\::::_\/_\__.::.__\/\:\\:\\:\ \\:::_ \ \\:::_ \ \ \::.\ \\ \ \  
+ \:. `-\  \ \\:\/___/\  \::\ \   \:\\:\\:\ \\:\ \ \ \\:(_) ) )_\:: \/_) \ \ 
+  \:. _    \ \\::___\/_  \::\ \   \:\\:\\:\ \\:\ \ \ \\: __ `\ \\:. __  ( ( 
+   \. \`-\  \ \\:\____/\  \::\ \   \:\\:\\:\ \\:\_\ \ \\ \ `\ \ \\: \ )  \ \
+    \__\/ \__\/ \_____\/   \__\/    \_______\/ \_____\/ \_\/ \_\/ \__\/\__\/";   
     }
     static class Display
     {
@@ -593,8 +664,8 @@ class Program
         Display.WithDelayAndColor(Vars.greetingTitle,Vars.primaryColor, false, 0);
         Vars.EnsureConfigFiles();
         Display.WithDelayAndColor("Fetching information from the server. Please wait...", Vars.secondaryColor);
-        Update.GeneralStats(); 
+        //Update.GeneralStats(); 
         Display.WithDelayAndColor("Information updated", Vars.secondaryColor);
-
+        Menu.General();
     }
 }
