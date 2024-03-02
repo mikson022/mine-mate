@@ -1,8 +1,5 @@
 {
-  "addresses": [
-    "88R9XuUmU7sDUdN63fKw2HjC3xJ3tgxUBAjDzRCC2NNeHA2u3hkLr57894hrJGKMGag5hpvt6fBzEPgkEnFYsNGt5pgBg3u",
-    "86A1LVfYyWyM7g8oSuSkYecRuHX2P2Nhw6MHSSFxQVWKUYeazwiUPdjLSRtphBWuZbHjSvPdgrP2VWQZWKP5sC86PFtFb6u"
-  ],
+  "addresses": [],
   "APIs": {
     "monerodorg": {
       "request": [
@@ -25,7 +22,17 @@
         },
         "poolPayments": [],
         "minerStats": null,
-        "minerStatsAllworkers": null,
+        "minerStatsAllworkers": {
+          "global": {
+            "lts": 0,
+            "identifer": "global",
+            "hash": 0,
+            "hash2": 0,
+            "totalHash": 0,
+            "validShares": 0,
+            "invalidShares": 0
+          }
+        },
         "minerPayments": [],
         "minerBlockPayments": []
       }

@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 
 
 
-/*      config/config.json     */
+/*      xmrig/config.json     */
 namespace Rig
 {
     public class Randomx
@@ -282,8 +282,161 @@ class Program
 {
     static class Vars
     {
+        public static AppJSON.App mainApp = new AppJSON.App();
         public static ConsoleColor primaryColor = ConsoleColor.Green;
-        public static ConsoleColor secondaryColor = ConsoleColor.Green;
+        public static ConsoleColor secondaryColor = ConsoleColor.Red;
+        public static void EnsureConfigFiles()
+        {
+            string configFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "xmrig");
+            if (!Directory.Exists(configFolderPath))
+            {
+                Directory.CreateDirectory(configFolderPath);
+                Console.WriteLine($"Created folder: {configFolderPath}");
+            }
+
+            string rigJsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.Combine("xmrig", "config.json"));
+            string mineMateJson = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.Combine("app.json"));
+            string[] paths = { rigJsonPath, mineMateJson };
+
+            foreach (string path in paths)
+            {
+                if (!File.Exists(path))
+                {
+                    string defaultContent = "";
+
+                    if (path.EndsWith("config.json"))
+                    {
+                        defaultContent = GenerateDefaultConfigContent();
+                    }
+                    else if (path.EndsWith("app.json"))
+                    {
+                        defaultContent = GenerateDefaultAppContent();
+                    }
+                    File.WriteAllText(path, defaultContent);
+                    Console.WriteLine($"Created file: {path}");
+                }
+            }
+        }
+
+        private static string GenerateDefaultConfigContent()
+        {
+            return @"{
+            ""autosave"": true,
+            ""background"": false,
+            ""colors"": true,
+            ""title"": ""Contributor"",
+            ""randomx"": {
+                ""init"": -1,
+                ""init-avx2"": -1,
+                ""mode"": ""auto"",
+                ""1gb-pages"": false,
+                ""rdmsr"": true,
+                ""wrmsr"": true,
+                ""cache_qos"": false,
+                ""numa"": true,
+                ""scratchpad_prefetch_mode"": 1
+            },
+            ""cpu"": {
+                ""enabled"": true,
+                ""huge-pages"": true,
+                ""huge-pages-jit"": false,
+                ""hw-aes"": null,
+                ""priority"": null,
+                ""memory-pool"": false,
+                ""yield"": true,
+                ""asm"": true,
+                ""argon2-impl"": null,
+                ""rx"": [
+                    [
+                        4,
+                        0
+                    ],
+                    [
+                        1,
+                        1
+                    ]
+                ]
+            },
+            ""log-file"": null,
+            ""donate-level"": 0,
+            ""donate-over-proxy"": 1,
+            ""pools"": [
+                {
+                    ""algo"": null,
+                    ""coin"": null,
+                    ""url"": ""mine.monerod.org:5555"",
+                    ""user"": ""YourWallet"",
+                    ""pass"": ""You"",
+                    ""rig_id"": null,
+                    ""nicehash"": false,
+                    ""keepalive"": true,
+                    ""enabled"": true,
+                    ""tls"": false,
+                    ""sni"": false,
+                    ""tls-fingerprint"": null,
+                    ""daemon"": false,
+                    ""socks5"": null,
+                    ""self-select"": null,
+                    ""submit-to-origin"": false
+                }
+            ],
+            ""retries"": 10,
+            ""retry-pause"": 5,
+            ""print-time"": 30,
+            ""health-print-time"": 120,
+            ""dmi"": true,
+            ""syslog"": false,
+            ""userAgent"": null,
+            ""verbose"": 1,
+            ""watch"": true,
+            ""pause-on-battery"": false,
+            ""pause-on-active"": false
+        }";
+        }
+        private static string GenerateDefaultAppContent()
+        {
+            return @"{
+            ""addresses"": [],
+            ""APIs"": {
+                ""monerodorg"": {
+                ""request"": [
+                    ""https://np-api.monerod.org/network/stats"",
+                    ""https://np-api.monerod.org/pool/stats"",
+                    ""https://np-api.monerod.org/pool/blocks"",
+                    ""https://np-api.monerod.org/pool/payments"",
+                    ""https://np-api.monerod.org/miner//stats"",
+                    ""https://np-api.monerod.org/miner//stats/allworkers"",
+                    ""https://np-api.monerod.org/miner//identifiers"",
+                    ""https://np-api.monerod.org/miner//payments"",
+                    ""https://np-api.monerod.org/miner//block_payments""
+                ],
+                ""response"": {
+                    ""networkStats"": {},
+                    ""poolBlocks"": [],
+                    ""minerIdentifiers"": null,
+                    ""poolStats"": {
+                    ""pool_list"": []
+                    },
+                    ""poolPayments"": [],
+                    ""minerStats"": null,
+                    ""minerStatsAllworkers"": {
+                    ""global"": {
+                        ""lts"": 0,
+                        ""identifier"": ""global"",
+                        ""hash"": 0,
+                        ""hash2"": 0,
+                        ""totalHash"": 0,
+                        ""validShares"": 0,
+                        ""invalidShares"": 0
+                    }
+                    },
+                    ""minerPayments"": [],
+                    ""minerBlockPayments"": []
+                }
+                }
+            }
+            }";
+        }
         public static string greetingTitle = @"
  _____ ______   ________  ________   _______   ________  ________  ________      ________  ________  ________     
 |\   _ \  _   \|\   __  \|\   ___  \|\  ___ \ |\   __  \|\   __  \|\   ___ \    |\   __  \|\   __  \|\   ____\    
@@ -296,10 +449,10 @@ class Program
     }
     static class Display
     {
-        public static void WithDelayAndColor(string message, int miliseconds, ConsoleColor color, bool timeBeforeMessage = true)
+        public static void WithDelayAndColor(string message, ConsoleColor color, bool timeBeforeMessage = true, int miliseconds = 5)
         {
             if(timeBeforeMessage)
-                message = $"[{DateTime.Now}]   {message}";
+                message = $"[{DateTime.Now}] {message}";
             Console.ForegroundColor = color;
             foreach(char c in message)
             {
@@ -312,7 +465,7 @@ class Program
     static class ConfigJSON
     {
         private readonly static string rigJsonPath = 
-        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.Combine("config", "config.json"));
+        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.Combine("xmrig", "config.json"));
         private readonly static string mineMateJson = 
         Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.Combine("app.json"));
         private readonly static string[] paths = {rigJsonPath, mineMateJson};
@@ -348,26 +501,26 @@ class Program
     }
     static class Update
     {
-        public static void GeneralStats(AppJSON.App mainApp)
+        public static void GeneralStats()
         {
-            mainApp = ConfigJSON.ReadAndDeserialize<AppJSON.App>(1);
+            Vars.mainApp = ConfigJSON.ReadAndDeserialize<AppJSON.App>(1);
 
-            string responseJsonNetStat = Http.Get(mainApp.APIs!.monerodorg!.request![0]); //network/stats request
-            string responseJsonPoolStat = Http.Get(mainApp.APIs!.monerodorg!.request![1]); //pool/stats request
-            string responseJsonPoolBlock = Http.Get(mainApp.APIs!.monerodorg!.request![2]); //pool/block request
-            string responseJsonPoolPay = Http.Get(mainApp.APIs!.monerodorg!.request![3]); //pool/payment request
+            string responseJsonNetStat = Http.Get(Vars.mainApp.APIs!.monerodorg!.request![0]); //network/stats request
+            string responseJsonPoolStat = Http.Get(Vars.mainApp.APIs!.monerodorg!.request![1]); //pool/stats request
+            string responseJsonPoolBlock = Http.Get(Vars.mainApp.APIs!.monerodorg!.request![2]); //pool/block request
+            string responseJsonPoolPay = Http.Get(Vars.mainApp.APIs!.monerodorg!.request![3]); //pool/payment request
 
             AppJSON.NetworkStats responseDataNetStat = JsonSerializer.Deserialize<AppJSON.NetworkStats>(responseJsonNetStat)!; 
             AppJSON.PoolStats responseDataPoolStat = JsonSerializer.Deserialize<AppJSON.PoolStats>(responseJsonPoolStat)!; 
             List<AppJSON.PoolBlock> responseDataPoolBlock = JsonSerializer.Deserialize<List<AppJSON.PoolBlock>>(responseJsonPoolBlock)!; 
             List<AppJSON.PoolPayment> responseDataPoolPay = JsonSerializer.Deserialize<List<AppJSON.PoolPayment>>(responseJsonPoolPay)!; 
 
-            mainApp.APIs.monerodorg.response!.networkStats = responseDataNetStat;
-            mainApp.APIs.monerodorg.response!.poolStats = responseDataPoolStat;
-            mainApp.APIs.monerodorg.response!.poolBlocks = responseDataPoolBlock;
-            mainApp.APIs.monerodorg.response!.poolPayments = responseDataPoolPay;
+            Vars.mainApp.APIs.monerodorg.response!.networkStats = responseDataNetStat;
+            Vars.mainApp.APIs.monerodorg.response!.poolStats = responseDataPoolStat;
+            Vars.mainApp.APIs.monerodorg.response!.poolBlocks = responseDataPoolBlock;
+            Vars.mainApp.APIs.monerodorg.response!.poolPayments = responseDataPoolPay;
 
-            ConfigJSON.SerializeAndWrite(1, mainApp);
+            ConfigJSON.SerializeAndWrite(1, Vars.mainApp);
         }
         
         private static List<T> AppendIfNotExists<T>(List<T> existingList, List<T> newList)
@@ -410,40 +563,38 @@ class Program
             return prefix + postfix;
         }
 
-        public static void AddressSpecificStats(AppJSON.App mainApp, int addressNumber)
+        public static void AddressSpecificStats(int addressNumber)
         {
-            mainApp = ConfigJSON.ReadAndDeserialize<AppJSON.App>(1);
-            string address = mainApp.addresses![addressNumber];
+            Vars.mainApp = ConfigJSON.ReadAndDeserialize<AppJSON.App>(1);
+            string address = Vars.mainApp.addresses![addressNumber];
             
-            string stats = Http.Get(IntegrateAddressIntoLink(mainApp.APIs!.monerodorg!.request![4], address));
-            string statsAllWorkers = Http.Get(IntegrateAddressIntoLink(mainApp.APIs!.monerodorg!.request![5], address));
-            string identifiers = Http.Get(IntegrateAddressIntoLink(mainApp.APIs!.monerodorg!.request![6], address));
-            string payments = Http.Get(IntegrateAddressIntoLink(mainApp.APIs!.monerodorg!.request![7], address));
-            string blockPayments = Http.Get(IntegrateAddressIntoLink(mainApp.APIs!.monerodorg!.request![8], address));
+            string stats = Http.Get(IntegrateAddressIntoLink(Vars.mainApp.APIs!.monerodorg!.request![4], address));
+            string statsAllWorkers = Http.Get(IntegrateAddressIntoLink(Vars.mainApp.APIs!.monerodorg!.request![5], address));
+            string identifiers = Http.Get(IntegrateAddressIntoLink(Vars.mainApp.APIs!.monerodorg!.request![6], address));
+            string payments = Http.Get(IntegrateAddressIntoLink(Vars.mainApp.APIs!.monerodorg!.request![7], address));
+            string blockPayments = Http.Get(IntegrateAddressIntoLink(Vars.mainApp.APIs!.monerodorg!.request![8], address));
 
             AppJSON.MinerStats responseStats = JsonSerializer.Deserialize<AppJSON.MinerStats>(stats)!;
             Dictionary<string, AppJSON.WorkerStats> responseStatsAllWorkers = JsonSerializer.Deserialize<Dictionary<string, AppJSON.WorkerStats>>(statsAllWorkers)!;            List<string> responseIDs = JsonSerializer.Deserialize<List<string>>(identifiers)!;
             List<AppJSON.MinerPayment> responsePayments = JsonSerializer.Deserialize<List<AppJSON.MinerPayment>>(payments)!;
             List<AppJSON.MinerBlockPayment> responseBlockPayments = JsonSerializer.Deserialize<List<AppJSON.MinerBlockPayment>>(blockPayments)!;
 
-            mainApp.APIs.monerodorg.response!.minerStats = responseStats;
-            mainApp.APIs.monerodorg.response!.minerStatsAllworkers!.Workers = responseStatsAllWorkers;
-            mainApp.APIs.monerodorg.response!.minerIdentifiers = responseIDs;
-            mainApp.APIs.monerodorg.response!.minerPayments = AppendIfNotExists(mainApp.APIs.monerodorg.response!.minerPayments!, responsePayments);
-            mainApp.APIs.monerodorg.response!.minerBlockPayments = AppendIfNotExists(mainApp.APIs.monerodorg.response!.minerBlockPayments!, responseBlockPayments);
+            Vars.mainApp.APIs.monerodorg.response!.minerStats = responseStats;
+            Vars.mainApp.APIs.monerodorg.response!.minerStatsAllworkers!.Workers = responseStatsAllWorkers;
+            Vars.mainApp.APIs.monerodorg.response!.minerIdentifiers = responseIDs;
+            Vars.mainApp.APIs.monerodorg.response!.minerPayments = AppendIfNotExists(Vars.mainApp.APIs.monerodorg.response!.minerPayments!, responsePayments);
+            Vars.mainApp.APIs.monerodorg.response!.minerBlockPayments = AppendIfNotExists(Vars.mainApp.APIs.monerodorg.response!.minerBlockPayments!, responseBlockPayments);
 
-            ConfigJSON.SerializeAndWrite(1, mainApp);
+            ConfigJSON.SerializeAndWrite(1, Vars.mainApp);
         }
     }
     static void Main(string[] args)
     {
-        AppJSON.App mainApp = new AppJSON.App();
-
-        Display.WithDelayAndColor(Vars.greetingTitle, 0, Vars.primaryColor, false);
-        
-        Display.WithDelayAndColor("Fetching information from the server. Please wait...", 5, Vars.secondaryColor);
-        Update.GeneralStats(mainApp); 
-        Display.WithDelayAndColor("Information updated", 5, Vars.secondaryColor);
+        Display.WithDelayAndColor(Vars.greetingTitle,Vars.primaryColor, false, 0);
+        Vars.EnsureConfigFiles();
+        Display.WithDelayAndColor("Fetching information from the server. Please wait...", Vars.secondaryColor);
+        Update.GeneralStats(); 
+        Display.WithDelayAndColor("Information updated", Vars.secondaryColor);
 
     }
 }
