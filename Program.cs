@@ -42,7 +42,7 @@ namespace Rig
         public bool? asm { get; set; }
         [JsonPropertyName("argon2-impl")]
         public object? argon2_impl { get; set; }
-        public IList<IList<int>>? rx { get; set; }
+        public List<List<int>>? rx { get; set; }
     }
     public class Pool
     {
@@ -80,7 +80,7 @@ namespace Rig
         public int donateLevel { get; set; }
         [JsonPropertyName("donate-over-proxy")]
         public int donateOverProxy { get; set; }
-        public IList<Pool>? pools { get; set; }
+        public List<Pool>? pools { get; set; }
         public long retries { get; set; }
         [JsonPropertyName("retry-pause")]
         public int retryPause { get; set; }
@@ -161,7 +161,7 @@ namespace AppJSON
         public double roundHashes { get; set; }
         public int totalAltBlocksFound { get; set; }
         public int activePort { get; set; }
-        public IList<object>? activePorts { get; set; }
+        public List<object>? activePorts { get; set; }
         public int activePortProfit { get; set; }
         public MinBlockRewards? minBlockRewards { get; set; }
         public int pending { get; set; }
@@ -175,7 +175,7 @@ namespace AppJSON
     }
     public class PoolStats
     {
-        public IList<string>? pool_list { get; set; }
+        public List<string>? pool_list { get; set; }
         public PoolStatistics? pool_statistics { get; set; }
         public int last_payment { get; set; }
     }
@@ -215,19 +215,9 @@ namespace AppJSON
         public long amtDue { get; set; }
         public int txnCount { get; set; }
     }
-    public class Global
-    {
-        public int lts { get; set; }
-        public string? identifer { get; set; }
-        public double hash { get; set; }
-        public double hash2 { get; set; }
-        public double totalHash { get; set; }
-        public int validShares { get; set; }
-        public int invalidShares { get; set; }
-    }
     public class MinerStatsAllworkers
     {
-        public IDictionary<string, WorkerStats>? Workers { get; set; }
+        public Dictionary<string, WorkerStats>? Workers { get; set; }
     }
     public class WorkerStats
     {
@@ -247,20 +237,31 @@ namespace AppJSON
         public string? txnHash { get; set; }
         public int mixin { get; set; }
     }
+    public class MinerBlockPayment
+    {
+        public int id { get; set; }
+        public int ts { get; set; }
+        public int ts_found { get; set; }
+        public int port { get; set; }
+        public string? hash { get; set; }
+        public double value_percent { get; set; }
+        public double value { get; set; }
+    }
     public class Response
     {
         public NetworkStats? networkStats { get; set; }
         public List<PoolBlock>? poolBlocks { get; set; }
-        public IList<string>? minerIdentifiers { get; set; }
+        public List<string>? minerIdentifiers { get; set; }
         public PoolStats? poolStats { get; set; }
-        public IList<PoolPayment>? poolPayments { get; set; }
+        public List<PoolPayment>? poolPayments { get; set; }
         public MinerStats? minerStats { get; set; }
         public MinerStatsAllworkers? minerStatsAllworkers { get; set; }
-        public IList<MinerPayment>? minerPayments { get; set; }
+        public List<MinerPayment>? minerPayments { get; set; }
+        public List<MinerBlockPayment>? minerBlockPayments { get; set; }
     }
     public class Monerodorg
     {
-        public IList<string>? request { get; set; }
+        public List<string>? request { get; set; }
         public Response? response { get; set; }
     }
     public class APIs
@@ -269,7 +270,7 @@ namespace AppJSON
     }
     public class App
     {
-        public IList<string>? addresses { get; set; }
+        public List<string>? addresses { get; set; }
         public APIs? APIs { get; set; }
     }
 }
@@ -342,12 +343,77 @@ class Program
             ConfigJSON.SerializeAndWrite(1, mainApp);
         }
         
+        private static List<T> AppendIfNotExists<T>(List<T> existingList, List<T> newList)
+        {
+            foreach (var newEntry in newList)
+            {
+                bool isNew = true;
+                foreach (var existingEntry in existingList)
+                {
+                    bool isEqual = true;
+                    foreach (var property in typeof(T).GetProperties())
+                    {
+                        var newValue = property.GetValue(newEntry, null);
+                        var existingValue = property.GetValue(existingEntry, null);
+
+                        if (!newValue!.Equals(existingValue))
+                        {
+                            isEqual = false;
+                            break;
+                        }
+                    }
+                    if (isEqual)
+                    {
+                        isNew = false;
+                        break;
+                    }
+                }
+                if (isNew)
+                {
+                    existingList.Add(newEntry);
+                }
+            }
+            return existingList;
+        }
+
+        private static string IntegrateAddressIntoLink(string link, string address)
+        {
+            string prefix = link.Substring(0, 27);
+            string postfix = link.Substring(27).Replace("//", $"/{address}/");
+            return prefix + postfix;
+        }
+
+        public static void AddressSpecificStats(AppJSON.App mainApp, int addressNumber)
+        {
+            mainApp = ConfigJSON.ReadAndDeserialize<AppJSON.App>(1);
+            string address = mainApp.addresses![addressNumber];
+            
+            string stats = Http.Get(IntegrateAddressIntoLink(mainApp.APIs!.monerodorg!.request![4], address));
+            string statsAllWorkers = Http.Get(IntegrateAddressIntoLink(mainApp.APIs!.monerodorg!.request![5], address));
+            string identifiers = Http.Get(IntegrateAddressIntoLink(mainApp.APIs!.monerodorg!.request![6], address));
+            string payments = Http.Get(IntegrateAddressIntoLink(mainApp.APIs!.monerodorg!.request![7], address));
+            string blockPayments = Http.Get(IntegrateAddressIntoLink(mainApp.APIs!.monerodorg!.request![8], address));
+
+            AppJSON.MinerStats responseStats = JsonSerializer.Deserialize<AppJSON.MinerStats>(stats)!;
+            Dictionary<string, AppJSON.WorkerStats> responseStatsAllWorkers = JsonSerializer.Deserialize<Dictionary<string, AppJSON.WorkerStats>>(statsAllWorkers)!;            List<string> responseIDs = JsonSerializer.Deserialize<List<string>>(identifiers)!;
+            List<AppJSON.MinerPayment> responsePayments = JsonSerializer.Deserialize<List<AppJSON.MinerPayment>>(payments)!;
+            List<AppJSON.MinerBlockPayment> responseBlockPayments = JsonSerializer.Deserialize<List<AppJSON.MinerBlockPayment>>(blockPayments)!;
+
+            mainApp.APIs.monerodorg.response!.minerStats = responseStats;
+            mainApp.APIs.monerodorg.response!.minerStatsAllworkers!.Workers = responseStatsAllWorkers;
+            mainApp.APIs.monerodorg.response!.minerIdentifiers = responseIDs;
+            mainApp.APIs.monerodorg.response!.minerPayments = AppendIfNotExists(mainApp.APIs.monerodorg.response!.minerPayments!, responsePayments);
+            mainApp.APIs.monerodorg.response!.minerBlockPayments = AppendIfNotExists(mainApp.APIs.monerodorg.response!.minerBlockPayments!, responseBlockPayments);
+
+            ConfigJSON.SerializeAndWrite(1, mainApp);
+        }
     }
     static void Main(string[] args)
     {
         AppJSON.App mainApp = new AppJSON.App();
 
         Update.GeneralStats(mainApp); 
+        Update.AddressSpecificStats(mainApp, 0);
 
         Console.WriteLine("Hello, World!");
     }
