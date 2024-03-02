@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
+using System.Threading;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
@@ -279,7 +280,35 @@ namespace AppJSON
 
 class Program
 {
-
+    static class Vars
+    {
+        public static ConsoleColor primaryColor = ConsoleColor.Green;
+        public static ConsoleColor secondaryColor = ConsoleColor.Green;
+        public static string greetingTitle = @"
+ _____ ______   ________  ________   _______   ________  ________  ________      ________  ________  ________     
+|\   _ \  _   \|\   __  \|\   ___  \|\  ___ \ |\   __  \|\   __  \|\   ___ \    |\   __  \|\   __  \|\   ____\    
+\ \  \\\__\ \  \ \  \|\  \ \  \\ \  \ \   __/|\ \  \|\  \ \  \|\  \ \  \_|\ \   \ \  \|\  \ \  \|\  \ \  \___|    
+ \ \  \\|__| \  \ \  \\\  \ \  \\ \  \ \  \_|/_\ \   _  _\ \  \\\  \ \  \ \\ \   \ \  \\\  \ \   _  _\ \  \  ___  
+  \ \  \    \ \  \ \  \\\  \ \  \\ \  \ \  \_|\ \ \  \\  \\ \  \\\  \ \  \_\\ \ __\ \  \\\  \ \  \\  \\ \  \|\  \ 
+   \ \__\    \ \__\ \_______\ \__\\ \__\ \_______\ \__\\ _\\ \_______\ \_______\\__\ \_______\ \__\\ _\\ \_______\
+    \|__|     \|__|\|_______|\|__| \|__|\|_______|\|__|\|__|\|_______|\|_______\|__|\|_______|\|__|\|__|\|_______|
+";
+    }
+    static class Display
+    {
+        public static void WithDelayAndColor(string message, int miliseconds, ConsoleColor color, bool timeBeforeMessage = true)
+        {
+            if(timeBeforeMessage)
+                message = $"[{DateTime.Now}]   {message}";
+            Console.ForegroundColor = color;
+            foreach(char c in message)
+            {
+                Console.Write(c);
+                Thread.Sleep(miliseconds);
+            }
+            Console.Write("\n");
+        }
+    }
     static class ConfigJSON
     {
         private readonly static string rigJsonPath = 
@@ -297,7 +326,6 @@ class Program
             File.WriteAllText(paths[n], JsonSerializer.Serialize(instance, option));
         }
     }
-    
     static class Http
     {
         public static string Get(string url)
@@ -318,7 +346,6 @@ class Program
             }
         }
     }
-    
     static class Update
     {
         public static void GeneralStats(AppJSON.App mainApp)
@@ -412,9 +439,11 @@ class Program
     {
         AppJSON.App mainApp = new AppJSON.App();
 
+        Display.WithDelayAndColor(Vars.greetingTitle, 0, Vars.primaryColor, false);
+        
+        Display.WithDelayAndColor("Fetching information from the server. Please wait...", 5, Vars.secondaryColor);
         Update.GeneralStats(mainApp); 
-        Update.AddressSpecificStats(mainApp, 0);
+        Display.WithDelayAndColor("Information updated", 5, Vars.secondaryColor);
 
-        Console.WriteLine("Hello, World!");
     }
 }
