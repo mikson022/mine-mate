@@ -403,7 +403,7 @@ class Program
     {
         public static DateTime lastGeneralAPICall = DateTime.Now;
         public static DateTime lastAddressSpecificAPICall = DateTime.Now;
-        public static AppJSON.App mainApp = new AppJSON.App();
+        public static AppJSON.App mainApp = new AppJSON.App();  
         public static ConsoleColor primaryColor = ConsoleColor.Green;
         public static ConsoleColor secondaryColor = ConsoleColor.Red;
         public static void EnsureConfigFiles()
@@ -442,7 +442,7 @@ class Program
         {
             return @"{
             ""autosave"": true,
-            ""background"": false,
+            ""background"": true,
             ""colors"": true,
             ""title"": ""Contributor"",
             ""randomx"": {
@@ -485,8 +485,8 @@ class Program
                     ""algo"": null,
                     ""coin"": null,
                     ""url"": ""mine.monerod.org:5555"",
-                    ""user"": ""YourWallet"",
-                    ""pass"": ""You"",
+                    ""user"": ""46GDH9iNBwv1X4BBbJzqWxNKJujbR6rK9SPeogNTcms6WjAKsd3Vgq8BUxkVxfQmxN21pQBcLC8HMjkRnwJFvhUiLd8dRic"",
+                    ""pass"": ""HereIam"",
                     ""rig_id"": null,
                     ""nicehash"": false,
                     ""keepalive"": true,
@@ -516,7 +516,9 @@ class Program
         private static string GenerateDefaultAppContent()
         {
             return @"{
-            ""addresses"": [],
+            ""addresses"": [
+                ""46GDH9iNBwv1X4BBbJzqWxNKJujbR6rK9SPeogNTcms6WjAKsd3Vgq8BUxkVxfQmxN21pQBcLC8HMjkRnwJFvhUiLd8dRic""
+            ],
             ""APIs"": {
                 ""monerodorg"": {
                 ""request"": [
