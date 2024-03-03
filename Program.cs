@@ -303,6 +303,22 @@ class Program
                     case 'i':
                         PoolInformation();
                         break;
+                    case 'w':
+                        
+                        break;
+                    case 'm':
+                        
+                        break;
+                    case 'p':
+                        
+                        break;
+                    case 's':
+                        
+                        break;
+                    case 'u':
+                        Update.GeneralStats();
+                        Update.AddressSpecificStats(0);
+                        break;
                     case 'q':
                         exit = true;
                         break;
@@ -385,6 +401,8 @@ class Program
     }
     static class Vars
     {
+        public static DateTime lastGeneralAPICall = DateTime.Now;
+        public static DateTime lastAddressSpecificAPICall = DateTime.Now;
         public static AppJSON.App mainApp = new AppJSON.App();
         public static ConsoleColor primaryColor = ConsoleColor.Green;
         public static ConsoleColor secondaryColor = ConsoleColor.Red;
@@ -621,6 +639,16 @@ Console.Write("\n");
     {
         public static void GeneralStats()
         {
+            DateTime currentTime = DateTime.Now;
+            TimeSpan timeSinceLastCall = currentTime - Vars.lastGeneralAPICall;
+            if (timeSinceLastCall < TimeSpan.FromMinutes(4))
+            {
+                TimeSpan cooldownRemaining = TimeSpan.FromMinutes(4) - timeSinceLastCall;
+                Display.WithDelayAndColor($"Try again in {cooldownRemaining.TotalMinutes:F2} minutes", Vars.secondaryColor);
+                return; 
+            }
+            Vars.lastGeneralAPICall = currentTime;
+
             Vars.mainApp = ConfigJSON.ReadAndDeserialize<AppJSON.App>(1);
 
             string responseJsonNetStat = Http.Get(Vars.mainApp.APIs!.monerodorg!.request![0]); //network/stats request
@@ -683,9 +711,19 @@ Console.Write("\n");
 
         public static void AddressSpecificStats(int addressNumber)
         {
+            DateTime currentTime = DateTime.Now;
+            TimeSpan timeSinceLastCall = currentTime - Vars.lastAddressSpecificAPICall;
+            if (timeSinceLastCall < TimeSpan.FromMinutes(4))
+            {
+                TimeSpan cooldownRemaining = TimeSpan.FromMinutes(4) - timeSinceLastCall;
+                Display.WithDelayAndColor($"Try again in {cooldownRemaining.TotalMinutes:F2} minutes", Vars.secondaryColor);
+                return; 
+            }
+            Vars.lastAddressSpecificAPICall = currentTime;
+
             Vars.mainApp = ConfigJSON.ReadAndDeserialize<AppJSON.App>(1);
             string address = Vars.mainApp.addresses![addressNumber];
-            
+                
             string stats = Http.Get(IntegrateAddressIntoLink(Vars.mainApp.APIs!.monerodorg!.request![4], address));
             string statsAllWorkers = Http.Get(IntegrateAddressIntoLink(Vars.mainApp.APIs!.monerodorg!.request![5], address));
             string identifiers = Http.Get(IntegrateAddressIntoLink(Vars.mainApp.APIs!.monerodorg!.request![6], address));
