@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
@@ -294,6 +295,12 @@ class Program
                     case 'o':
                         GeneralOptions();
                         break;
+                    case 'x':
+                        if(ConfigJSON.IsXmrigRunning())
+                            Display.WithDelayAndColor("XMRig running", Vars.secondaryColor);
+                        else 
+                            Display.WithDelayAndColor("XMRig not running", Vars.secondaryColor);
+                        break;
                     case 'g':
                         //
                         break;
@@ -376,6 +383,7 @@ class Program
             Display.WithDelayAndColor("\t\tGeneral Menu\n", Vars.primaryColor, false);
                 
             Display.WithDelayAndColor("show (o)ptions", Vars.primaryColor);
+            Display.WithDelayAndColor("check (x)mrig status", Vars.primaryColor);
             Display.WithDelayAndColor("setup (g)uided", Vars.primaryColor); // guided setup of app.json and config.json
 
 
@@ -569,13 +577,13 @@ class Program
     \|__|     \|__|\|_______|\|__| \|__|\|_______|\|__|\|__|\|_______|\|_______\|__|\|_______|\|__|\|__|\|_______|
 ";
         public static string networkTitle = @"
- ___   __    ______   _________  __ __ __   ______   ______    ___   ___    
-/__/\ /__/\ /_____/\ /________/\/_//_//_/\ /_____/\ /_____/\  /___/\/__/\   
-\::\_\\  \ \\::::_\/_\__.::.__\/\:\\:\\:\ \\:::_ \ \\:::_ \ \ \::.\ \\ \ \  
- \:. `-\  \ \\:\/___/\  \::\ \   \:\\:\\:\ \\:\ \ \ \\:(_) ) )_\:: \/_) \ \ 
-  \:. _    \ \\::___\/_  \::\ \   \:\\:\\:\ \\:\ \ \ \\: __ `\ \\:. __  ( ( 
-   \. \`-\  \ \\:\____/\  \::\ \   \:\\:\\:\ \\:\_\ \ \\ \ `\ \ \\: \ )  \ \
-    \__\/ \__\/ \_____\/   \__\/    \_______\/ \_____\/ \_\/ \_\/ \__\/\__\/";  
+ ________   _______  _________  ___       __   ________  ________  ___  __       
+|\   ___  \|\  ___ \|\___   ___\\  \     |\  \|\   __  \|\   __  \|\  \|\  \     
+\ \  \\ \  \ \   __/\|___ \  \_\ \  \    \ \  \ \  \|\  \ \  \|\  \ \  \/  /|_   
+ \ \  \\ \  \ \  \_|/__  \ \  \ \ \  \  __\ \  \ \  \\\  \ \   _  _\ \   ___  \  
+  \ \  \\ \  \ \  \_|\ \  \ \  \ \ \  \|\__\_\  \ \  \\\  \ \  \\  \\ \  \\ \  \ 
+   \ \__\\ \__\ \_______\  \ \__\ \ \____________\ \_______\ \__\\ _\\ \__\\ \__\
+    \|__| \|__|\|_______|   \|__|  \|____________|\|_______|\|__|\|__|\|__| \|__|";  
         public static string poolTitle = @"
  ________  ________  ________  ___          
 |\   __  \|\   __  \|\   __  \|\  \         
@@ -615,6 +623,11 @@ Console.Write("\n");
         {
             var option = new JsonSerializerOptions { WriteIndented = true };
             File.WriteAllText(paths[n], JsonSerializer.Serialize(instance, option));
+        }
+        public static bool IsXmrigRunning()
+        {
+            Process[] processes = Process.GetProcessesByName("xmrig");
+            return processes.Length > 0;
         }
     }
     static class Http
