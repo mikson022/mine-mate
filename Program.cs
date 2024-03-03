@@ -184,8 +184,8 @@ namespace AppJSON
     {
         public object? ts { get; set; }
         public string? hash { get; set; }
-        public object? diff { get; set; }
-        public object? shares { get; set; }
+        public double? diff { get; set; }
+        public double? shares { get; set; }
         public int height { get; set; }
         public bool valid { get; set; }
         public bool unlocked { get; set; }
@@ -282,51 +282,32 @@ class Program
 {
     static class Menu
     {
-        public static void General()
+        public static void Start()
         {
+            GeneralOptions();
             bool exit = false;
             while (!exit)
             {
-                Display.WithDelayAndColor("\t\tGeneral Menu\n", Vars.primaryColor, false);
-                
-                Display.WithDelayAndColor("setup (g)uided", Vars.primaryColor); // guided setup of app.json and config.json
-
-
-                Display.WithDelayAndColor("monero (n)etwork", Vars.primaryColor); // networkStats
-                Display.WithDelayAndColor("pool (i)nformation", Vars.primaryColor); // poolStats, poolPayments, poolBlocks
-                
-                Display.WithDelayAndColor("your (w)orkers", Vars.primaryColor); // minerIdentifiers, minerStatsAllworkers
-                Display.WithDelayAndColor("your (m)iner", Vars.primaryColor);   // minerStats
-                Display.WithDelayAndColor("your (p)ayments", Vars.primaryColor); // minerPayments, minerBlockPayments
-
-                Display.WithDelayAndColor("general (s)ummary", Vars.primaryColor);
-
-                Display.WithDelayAndColor("data (u)pdate", Vars.primaryColor);
-               
-
-                Display.WithDelayAndColor("close, (e)xit", Vars.primaryColor);
-
                 ConsoleKeyInfo keyInfo = Console.ReadKey(true); 
                 switch (keyInfo.KeyChar)
                 {
+                    case 'o':
+                        GeneralOptions();
+                        break;
                     case 'g':
                         //
-                        Console.ReadKey();
                         break;
                     case 'n':
                         MoneroNetwork();
-                        Console.ReadKey();
                         break;
                     case 'i':
                         PoolInformation();
-                        Console.ReadKey();
                         break;
-                    case 'e':
+                    case 'q':
                         exit = true;
                         break;
                     default:
                         Console.WriteLine("Invalid option. Try again");
-                        Console.ReadKey();
                         break;
                 }
             }
@@ -344,26 +325,55 @@ class Program
             double mainHeight = Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.main_height;
             double difference = mainHeight - lastBlockFound;
 
-
-            Display.WithDelayAndColor("Pool Hashrate: " + Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.hashRate, Vars.secondaryColor);
-            Display.WithDelayAndColor("Current effort: " + Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.roundHashes / Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.difficulty * 100 + " %", Vars.secondaryColor);
-            Display.WithDelayAndColor($"Last block found: {difference * 2 / 60} hours ago  /  {difference * 2 / 60 / 24} days ago", Vars.secondaryColor);
-            Display.WithDelayAndColor("Miners: " + Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.miners, Vars.secondaryColor);
-            Display.WithDelayAndColor($"1 Monero: ${usdPrice}  /  €{eurPrice}  /  {btcPrice} btc", Vars.secondaryColor);
-
-
+            double averageEffort = 0;
+            foreach (var block in Vars.mainApp!.APIs!.monerodorg!.response!.poolBlocks!)
+            {
+                double effort = (double) block.shares! / (double) block.diff!;
+                averageEffort += effort;
+            }
+            averageEffort /= Vars.mainApp!.APIs!.monerodorg!.response!.poolBlocks!.Count; averageEffort *= 100;
+            
+            Display.WithDelayAndColor($"Pool Hashrate: {Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.hashRate}", Vars.secondaryColor);
+            Display.WithDelayAndColor($"Current effort: {Math.Round(Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.roundHashes / Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.difficulty * 100, 4)} %", Vars.secondaryColor);
+            Display.WithDelayAndColor($"Last block found: {Math.Round(difference * 2 / 60, 4)} hours ago  /  {Math.Round(difference * 2 / 60 / 24, 4)} days ago", Vars.secondaryColor);
+            Display.WithDelayAndColor($"Miners: {Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.miners}", Vars.secondaryColor);
+            Display.WithDelayAndColor($"1 Monero: ${Math.Round(usdPrice, 4)}  /  €{Math.Round(eurPrice, 4)}  /  {Math.Round(btcPrice, 12)} btc", Vars.secondaryColor);
+            Display.WithDelayAndColor($"Average effort over the last 25 blocks: {Math.Round(averageEffort, 4)} %", Vars.secondaryColor);
+            
             ConfigJSON.SerializeAndWrite(1, Vars.mainApp);
         }
         private static void MoneroNetwork()
         {
             Display.WithDelayAndColor(Vars.networkTitle, Vars.secondaryColor, false, 0);
             Vars.mainApp = ConfigJSON.ReadAndDeserialize<AppJSON.App>(1);
-            Display.WithDelayAndColor("Difficulty: " + Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.difficulty, Vars.secondaryColor);
-            Display.WithDelayAndColor("Block Height: " + Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.main_height, Vars.secondaryColor);
-            Display.WithDelayAndColor("Hash: " + Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.hash, Vars.secondaryColor);
-            Display.WithDelayAndColor("Reward: " + "0." + Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.value, Vars.secondaryColor);
-            Display.WithDelayAndColor("Time Stamp: " + ConvertUnixTimestamp(Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.ts) + " GMT+0000", Vars.secondaryColor);
+            Display.WithDelayAndColor($"Difficulty: {Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.difficulty}", Vars.secondaryColor);
+            Display.WithDelayAndColor($"Block Height: {Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.main_height}", Vars.secondaryColor);
+            Display.WithDelayAndColor($"Hash: {Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.hash}", Vars.secondaryColor);
+            Display.WithDelayAndColor($"Reward: 0.{Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.value}", Vars.secondaryColor);
+            Display.WithDelayAndColor($"Time Stamp: {ConvertUnixTimestamp(Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.ts)}  GMT+0000", Vars.secondaryColor);
             ConfigJSON.SerializeAndWrite(1, Vars.mainApp);
+        }
+        private static void GeneralOptions()
+        {
+            Display.WithDelayAndColor("\t\tGeneral Menu\n", Vars.primaryColor, false);
+                
+            Display.WithDelayAndColor("show (o)ptions", Vars.primaryColor);
+            Display.WithDelayAndColor("setup (g)uided", Vars.primaryColor); // guided setup of app.json and config.json
+
+
+            Display.WithDelayAndColor("monero (n)etwork", Vars.primaryColor); // networkStats
+            Display.WithDelayAndColor("pool (i)nformation", Vars.primaryColor); // poolStats, poolPayments, poolBlocks
+            
+            Display.WithDelayAndColor("your (w)orkers", Vars.primaryColor); // minerIdentifiers, minerStatsAllworkers
+            Display.WithDelayAndColor("your (m)iner", Vars.primaryColor);   // minerStats
+            Display.WithDelayAndColor("your (p)ayments", Vars.primaryColor); // minerPayments, minerBlockPayments
+
+            Display.WithDelayAndColor("general (s)ummary", Vars.primaryColor);
+
+            Display.WithDelayAndColor("data (u)pdate", Vars.primaryColor);
+            
+
+            Display.WithDelayAndColor("exit (q)uit", Vars.primaryColor);
         }
         private static DateTime ConvertUnixTimestamp(long timestamp)
         {
@@ -565,7 +575,7 @@ class Program
                 Console.Write(c);
                 Thread.Sleep(miliseconds);
             }
-            Console.Write("\n");
+Console.Write("\n");
         }
     }
     static class ConfigJSON
@@ -701,6 +711,6 @@ class Program
         Display.WithDelayAndColor("Fetching information from the server. Please wait...", Vars.secondaryColor);
         //Update.GeneralStats(); 
         Display.WithDelayAndColor("Information updated", Vars.secondaryColor);
-        Menu.General();
+        Menu.Start();
     }
 }
