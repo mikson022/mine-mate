@@ -317,10 +317,6 @@ class Program
             Display.WithDelayAndColor(Vars.poolTitle, Vars.secondaryColor, false, 0);
             Vars.mainApp = ConfigJSON.ReadAndDeserialize<AppJSON.App>(1);
 
-            double btcPrice = Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.price!.btc;
-            double usdPrice = Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.price!.usd;
-            double eurPrice = Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.price!.eur;
-
             double lastBlockFound = Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.lastBlockFound;
             double mainHeight = Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.main_height;
             double difference = mainHeight - lastBlockFound;
@@ -337,8 +333,7 @@ class Program
             Display.WithDelayAndColor($"Current effort: {Math.Round(Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.roundHashes / Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.difficulty * 100, 4)} %", Vars.secondaryColor);
             Display.WithDelayAndColor($"Last block found: {Math.Round(difference * 2 / 60, 4)} hours ago  /  {Math.Round(difference * 2 / 60 / 24, 4)} days ago", Vars.secondaryColor);
             Display.WithDelayAndColor($"Miners: {Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.miners}", Vars.secondaryColor);
-            Display.WithDelayAndColor($"1 Monero: ${Math.Round(usdPrice, 4)}  /  €{Math.Round(eurPrice, 4)}  /  {Math.Round(btcPrice, 12)} btc", Vars.secondaryColor);
-            Display.WithDelayAndColor($"Average effort over the last 25 blocks: {Math.Round(averageEffort, 4)} %", Vars.secondaryColor);
+            Display.WithDelayAndColor($"Average effort, last 25 blocks: {Math.Round(averageEffort, 4)} %", Vars.secondaryColor);
             
             ConfigJSON.SerializeAndWrite(1, Vars.mainApp);
         }
@@ -346,10 +341,17 @@ class Program
         {
             Display.WithDelayAndColor(Vars.networkTitle, Vars.secondaryColor, false, 0);
             Vars.mainApp = ConfigJSON.ReadAndDeserialize<AppJSON.App>(1);
+
+            double btcPrice = Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.price!.btc;
+            double usdPrice = Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.price!.usd;
+            double eurPrice = Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.price!.eur;
+            double rewardXmr = double.Parse($"0.{Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.value}");
+
             Display.WithDelayAndColor($"Difficulty: {Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.difficulty}", Vars.secondaryColor);
             Display.WithDelayAndColor($"Block Height: {Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.main_height}", Vars.secondaryColor);
             Display.WithDelayAndColor($"Hash: {Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.hash}", Vars.secondaryColor);
-            Display.WithDelayAndColor($"Reward: 0.{Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.value}", Vars.secondaryColor);
+            Display.WithDelayAndColor($"Reward: {rewardXmr} ~ ${Math.Round(usdPrice*rewardXmr, 4)}", Vars.secondaryColor);
+            Display.WithDelayAndColor($"1 Monero: ${Math.Round(usdPrice, 4)}  /  €{Math.Round(eurPrice, 4)}  /  {Math.Round(btcPrice, 12)} btc", Vars.secondaryColor);            
             Display.WithDelayAndColor($"Time Stamp: {ConvertUnixTimestamp(Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.ts)}  GMT+0000", Vars.secondaryColor);
             ConfigJSON.SerializeAndWrite(1, Vars.mainApp);
         }
