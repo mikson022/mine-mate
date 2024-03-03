@@ -287,19 +287,19 @@ class Program
             bool exit = false;
             while (!exit)
             {
-                Display.WithDelayAndColor("\nGeneral Menu\n", Vars.primaryColor);
+                Display.WithDelayAndColor("\t\tGeneral Menu\n", Vars.primaryColor, false);
                 
                 Display.WithDelayAndColor("setup (g)uided", Vars.primaryColor); // guided setup of app.json and config.json
 
 
                 Display.WithDelayAndColor("monero (n)etwork", Vars.primaryColor); // networkStats
-                Display.WithDelayAndColor("pool (s)ummary", Vars.primaryColor); // poolStats, poolPayments, poolBlocks
+                Display.WithDelayAndColor("pool (i)nformation", Vars.primaryColor); // poolStats, poolPayments, poolBlocks
                 
                 Display.WithDelayAndColor("your (w)orkers", Vars.primaryColor); // minerIdentifiers, minerStatsAllworkers
                 Display.WithDelayAndColor("your (m)iner", Vars.primaryColor);   // minerStats
-                Display.WithDelayAndColor("your (r)ewards", Vars.primaryColor); // minerPayments, minerBlockPayments
+                Display.WithDelayAndColor("your (p)ayments", Vars.primaryColor); // minerPayments, minerBlockPayments
 
-                Display.WithDelayAndColor("market (c)ondition/(c)alculations", Vars.primaryColor);
+                Display.WithDelayAndColor("general (s)ummary", Vars.primaryColor);
 
                 Display.WithDelayAndColor("data (u)pdate", Vars.primaryColor);
                
@@ -317,6 +317,10 @@ class Program
                         MoneroNetwork();
                         Console.ReadKey();
                         break;
+                    case 'i':
+                        PoolInformation();
+                        Console.ReadKey();
+                        break;
                     case 'e':
                         exit = true;
                         break;
@@ -326,6 +330,29 @@ class Program
                         break;
                 }
             }
+        }
+        private static void PoolInformation()
+        {
+            Display.WithDelayAndColor(Vars.poolTitle, Vars.secondaryColor, false, 0);
+            Vars.mainApp = ConfigJSON.ReadAndDeserialize<AppJSON.App>(1);
+
+            double btcPrice = Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.price!.btc;
+            double usdPrice = Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.price!.usd;
+            double eurPrice = Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.price!.eur;
+
+            double lastBlockFound = Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.lastBlockFound;
+            double mainHeight = Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.main_height;
+            double difference = mainHeight - lastBlockFound;
+
+
+            Display.WithDelayAndColor("Pool Hashrate: " + Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.hashRate, Vars.secondaryColor);
+            Display.WithDelayAndColor("Current effort: " + Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.roundHashes / Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.difficulty * 100 + " %", Vars.secondaryColor);
+            Display.WithDelayAndColor($"Last block found: {difference * 2 / 60} hours ago  /  {difference * 2 / 60 / 24} days ago", Vars.secondaryColor);
+            Display.WithDelayAndColor("Miners: " + Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.miners, Vars.secondaryColor);
+            Display.WithDelayAndColor($"1 Monero: ${usdPrice}  /  €{eurPrice}  /  {btcPrice} btc", Vars.secondaryColor);
+
+
+            ConfigJSON.SerializeAndWrite(1, Vars.mainApp);
         }
         private static void MoneroNetwork()
         {
@@ -516,7 +543,15 @@ class Program
  \:. `-\  \ \\:\/___/\  \::\ \   \:\\:\\:\ \\:\ \ \ \\:(_) ) )_\:: \/_) \ \ 
   \:. _    \ \\::___\/_  \::\ \   \:\\:\\:\ \\:\ \ \ \\: __ `\ \\:. __  ( ( 
    \. \`-\  \ \\:\____/\  \::\ \   \:\\:\\:\ \\:\_\ \ \\ \ `\ \ \\: \ )  \ \
-    \__\/ \__\/ \_____\/   \__\/    \_______\/ \_____\/ \_\/ \_\/ \__\/\__\/";   
+    \__\/ \__\/ \_____\/   \__\/    \_______\/ \_____\/ \_\/ \_\/ \__\/\__\/";  
+        public static string poolTitle = @"
+ ________  ________  ________  ___          
+|\   __  \|\   __  \|\   __  \|\  \         
+\ \  \|\  \ \  \|\  \ \  \|\  \ \  \        
+ \ \   ____\ \  \\\  \ \  \\\  \ \  \       
+  \ \  \___|\ \  \\\  \ \  \\\  \ \  \____  
+   \ \__\    \ \_______\ \_______\ \_______\
+    \|__|     \|_______|\|_______|\|_______|"; 
     }
     static class Display
     {
