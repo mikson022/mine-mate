@@ -651,6 +651,7 @@ Console.Write("\n");
 
             Vars.mainApp = ConfigJSON.ReadAndDeserialize<AppJSON.App>(1);
 
+            Display.WithDelayAndColor("Fetching information from the server. Please wait...", Vars.secondaryColor);
             string responseJsonNetStat = Http.Get(Vars.mainApp.APIs!.monerodorg!.request![0]); //network/stats request
             string responseJsonPoolStat = Http.Get(Vars.mainApp.APIs!.monerodorg!.request![1]); //pool/stats request
             string responseJsonPoolBlock = Http.Get(Vars.mainApp.APIs!.monerodorg!.request![2]); //pool/block request
@@ -667,6 +668,7 @@ Console.Write("\n");
             Vars.mainApp.APIs.monerodorg.response!.poolPayments = responseDataPoolPay;
 
             ConfigJSON.SerializeAndWrite(1, Vars.mainApp);
+            Display.WithDelayAndColor("Information updated", Vars.secondaryColor);
         }
         
         private static List<T> AppendIfNotExists<T>(List<T> existingList, List<T> newList)
@@ -723,7 +725,8 @@ Console.Write("\n");
 
             Vars.mainApp = ConfigJSON.ReadAndDeserialize<AppJSON.App>(1);
             string address = Vars.mainApp.addresses![addressNumber];
-                
+            
+            Display.WithDelayAndColor("Fetching information from the server. Please wait...", Vars.secondaryColor);
             string stats = Http.Get(IntegrateAddressIntoLink(Vars.mainApp.APIs!.monerodorg!.request![4], address));
             string statsAllWorkers = Http.Get(IntegrateAddressIntoLink(Vars.mainApp.APIs!.monerodorg!.request![5], address));
             string identifiers = Http.Get(IntegrateAddressIntoLink(Vars.mainApp.APIs!.monerodorg!.request![6], address));
@@ -742,15 +745,13 @@ Console.Write("\n");
             Vars.mainApp.APIs.monerodorg.response!.minerBlockPayments = AppendIfNotExists(Vars.mainApp.APIs.monerodorg.response!.minerBlockPayments!, responseBlockPayments);
 
             ConfigJSON.SerializeAndWrite(1, Vars.mainApp);
+            Display.WithDelayAndColor("Information updated", Vars.secondaryColor);
         }
     }
     static void Main(string[] args)
     {
         Display.WithDelayAndColor(Vars.greetingTitle,Vars.primaryColor, false, 0);
-        Vars.EnsureConfigFiles();
-        Display.WithDelayAndColor("Fetching information from the server. Please wait...", Vars.secondaryColor);
-        //Update.GeneralStats(); 
-        Display.WithDelayAndColor("Information updated", Vars.secondaryColor);
+        Vars.EnsureConfigFiles();  
         Menu.Start();
     }
 }
