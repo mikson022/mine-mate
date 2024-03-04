@@ -1,6 +1,6 @@
 # Mine-Mate: Your Monero Mining Companion
 
-Mine Mate is a utility designed to interact with Monero mining software and the pool mining website monerod.org, offering users quick access to information about the Monero network and its pool statistics via APIs. This tool provides an intuitive console interface for viewing various statistics and adjusting settings in the xmrig mining software.
+Mine Mate is a utility designed to interact with xmrig and the pool mining website monerod.org, offering users quick access to information about the Monero network and its pool statistics via APIs. This tool provides an intuitive console interface for viewing various statistics and adjusting settings in the xmrig mining software.
 
 ## Table of Contents
 
@@ -17,10 +17,10 @@ Mine Mate is a utility designed to interact with Monero mining software and the 
 **WIP - Work In Progress** 
 
 - Manage mining operations conveniently by clicking keys in the interactive console interface.
-- Fetch general statistics about the Monero network.
+- Fetch general statistics about the Monero network its prices.
 - Monitor pool mining statistics.
-- View prices of Monero.
-- **WIP** Easy xmrig + monerod.org mining configuration
+- **WIP** View your miner and workers statistics and your (block) payments.
+- **WIP** Easy xmrig + monerod.org mining configuration.
 - **WIP** Adjust mining settings such as core allocations.
 
 ## Installation
