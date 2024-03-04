@@ -678,18 +678,21 @@ Console.Write("\n");
             Display.WithDelayAndColor("Fetching information from the server. Please wait...", Vars.secondaryColor);
             string responseJsonNetStat = Http.Get(Vars.mainApp.APIs!.monerodorg!.request![0]); //network/stats request
             string responseJsonPoolStat = Http.Get(Vars.mainApp.APIs!.monerodorg!.request![1]); //pool/stats request
-            string responseJsonPoolBlock = Http.Get(Vars.mainApp.APIs!.monerodorg!.request![2]); //pool/block request
-            string responseJsonPoolPay = Http.Get(Vars.mainApp.APIs!.monerodorg!.request![3]); //pool/payment request
+            //string responseJsonPoolBlock = Http.Get(Vars.mainApp.APIs!.monerodorg!.request![2]); //pool/block request
+            //string responseJsonPoolPay = Http.Get(Vars.mainApp.APIs!.monerodorg!.request![3]); //pool/payment request
 
             AppJSON.NetworkStats responseDataNetStat = JsonSerializer.Deserialize<AppJSON.NetworkStats>(responseJsonNetStat)!; 
             AppJSON.PoolStats responseDataPoolStat = JsonSerializer.Deserialize<AppJSON.PoolStats>(responseJsonPoolStat)!; 
-            List<AppJSON.PoolBlock> responseDataPoolBlock = JsonSerializer.Deserialize<List<AppJSON.PoolBlock>>(responseJsonPoolBlock)!; 
-            List<AppJSON.PoolPayment> responseDataPoolPay = JsonSerializer.Deserialize<List<AppJSON.PoolPayment>>(responseJsonPoolPay)!; 
+            //List<AppJSON.PoolBlock> responseDataPoolBlock = JsonSerializer.Deserialize<List<AppJSON.PoolBlock>>(responseJsonPoolBlock)!; 
+            //List<AppJSON.PoolPayment> responseDataPoolPay = JsonSerializer.Deserialize<List<AppJSON.PoolPayment>>(responseJsonPoolPay)!; 
 
             Vars.mainApp.APIs.monerodorg.response!.networkStats = responseDataNetStat;
             Vars.mainApp.APIs.monerodorg.response!.poolStats = responseDataPoolStat;
-            Vars.mainApp.APIs.monerodorg.response!.poolBlocks = responseDataPoolBlock;
-            Vars.mainApp.APIs.monerodorg.response!.poolPayments = responseDataPoolPay;
+            //Vars.mainApp.APIs.monerodorg.response!.poolBlocks = responseDataPoolBlock;
+            //Vars.mainApp.APIs.monerodorg.response!.poolPayments = responseDataPoolPay;
+            
+            /*  Same data on API until new block is found and data redundancy. 
+                These will be resolved later to not increase of website costs   */
 
             ConfigJSON.SerializeAndWrite(1, Vars.mainApp);
             Display.WithDelayAndColor("Information updated", Vars.secondaryColor);
