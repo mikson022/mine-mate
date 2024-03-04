@@ -355,6 +355,7 @@ class Program
             Display.WithDelayAndColor($"Pool Hashrate: {Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.hashRate}", Vars.secondaryColor);
             Display.WithDelayAndColor($"Current effort: {Math.Round(Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.roundHashes / Vars.mainApp!.APIs!.monerodorg!.response!.networkStats!.difficulty * 100, 4)} %", Vars.secondaryColor);
             Display.WithDelayAndColor($"Last block found: {Math.Round(difference * 2 / 60, 4)} hours ago  /  {Math.Round(difference * 2 / 60 / 24, 4)} days ago", Vars.secondaryColor);
+            Display.WithDelayAndColor($"PPLNS Window: {Math.Round(Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.pplnsWindowTime / 3600, 4)} hours", Vars.secondaryColor);
             Display.WithDelayAndColor($"Miners: {Vars.mainApp!.APIs!.monerodorg!.response!.poolStats!.pool_statistics!.miners}", Vars.secondaryColor);
             Display.WithDelayAndColor($"Average effort, last 25 blocks: {Math.Round(averageEffort, 4)} %", Vars.secondaryColor);
             
