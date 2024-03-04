@@ -409,18 +409,21 @@ class Program
     }
     static class Vars
     {
-        public static DateTime lastGeneralAPICall = DateTime.Now;
-        public static DateTime lastAddressSpecificAPICall = DateTime.Now;
-        public static AppJSON.App mainApp = new AppJSON.App();  
+        public static DateTime lastGeneralAPICall = DateTime.Now.AddMinutes(-4);
+        public static DateTime lastAddressSpecificAPICall = DateTime.Now.AddMinutes(-4);
+        public static AppJSON.App? mainApp;  
         public static ConsoleColor primaryColor = ConsoleColor.Green;
         public static ConsoleColor secondaryColor = ConsoleColor.Red;
         public static void EnsureConfigFiles()
         {
+            bool filesCreated = false; // Flag to track if files were newly created
+
             string configFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "xmrig");
             if (!Directory.Exists(configFolderPath))
             {
                 Directory.CreateDirectory(configFolderPath);
                 Console.WriteLine($"Created folder: {configFolderPath}");
+                filesCreated = true; // Set flag to true if folder was newly created
             }
 
             string rigJsonPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.Combine("xmrig", "config.json"));
@@ -443,7 +446,13 @@ class Program
                     }
                     File.WriteAllText(path, defaultContent);
                     Console.WriteLine($"Created file: {path}");
+                    filesCreated = true; 
                 }
+            }
+            if (filesCreated)
+            {
+                Update.GeneralStats();
+                Update.AddressSpecificStats(0);
             }
         }
         private static string GenerateDefaultConfigContent()
