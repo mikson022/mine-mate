@@ -7,6 +7,7 @@ Mine Mate is a utility designed to interact with [xmrig](https://xmrig.com/) and
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Screenshots](#screenshots)
 - [Contributing](#contributing)
 - [License](#license)
 - [Known Issues](#known-issues)
@@ -17,7 +18,7 @@ Mine Mate is a utility designed to interact with [xmrig](https://xmrig.com/) and
 **WIP - Work In Progress** 
 
 - Manage mining operations conveniently by clicking keys in the interactive console interface.
-- Fetch general statistics about the Monero network its prices.
+- Fetch general statistics about the Monero network and its prices.
 - Monitor pool mining statistics.
 - **WIP** View your miner and workers statistics and your (block) payments.
 - **WIP** Easy xmrig + monerod.org mining configuration.
@@ -50,6 +51,13 @@ Launch Mine-Mate and navigate using the following keys:
 - **U:** Update data through APIs. (once in 4 minutes)
 - **Q:** Quit the application.
 
+## Screenshots
+
+![Start](screenshots/StartUp.png)
+
+![Network](screenshots/Network.png)
+
+![Pool](screenshots/Pool.png)
 
 ## Contributing
 
@@ -66,7 +74,6 @@ This project is licensed under the MIT License.
 ## Donations
 
 If you find Mine-Mate helpful, consider supporting me/its development:
-My Address:
 ```
 8BSH3XWeNhXMWhbbF4Y7KNDk61DVXfuwGdX4YbVJA8xw52ohbVcdbtMPgg27XfJ3QSYS8mxaQtVfr3QBYaRY8Fcz8iqy8z3
 ```
