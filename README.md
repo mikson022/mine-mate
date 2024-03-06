@@ -44,7 +44,7 @@ Launch Mine-Mate and navigate using the following keys:
 - **WIP** **G:** Guided interactive setup of config files.
 - **N:** Monero network: current difficulty, block height, hash, reward, monero price, time stamp.
 - **I:** Pool stats: hashrate, current effort, last block time, miners, average effort last 25 blocks. 
-- **WIP** **W:** Your workers' stats.
+- **W:** Your workers' stats.
 - **WIP** **M:** Your miner stats.
 - **WIP** **P:** Your payments and block payments.
 - **WIP** **S:** General summary.
@@ -58,6 +58,8 @@ Launch Mine-Mate and navigate using the following keys:
 ![Network](screenshots/Network.png)
 
 ![Pool](screenshots/Pool.png)
+
+![Workers](screenshots/Workers.png)
 
 ## Contributing
 

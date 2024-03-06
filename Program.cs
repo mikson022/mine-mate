@@ -311,7 +311,7 @@ class Program
                         PoolInformation();
                         break;
                     case 'w':
-                        
+                        YourWorkers();
                         break;
                     case 'm':
                         
@@ -334,6 +334,32 @@ class Program
                         break;
                 }
             }
+        }
+        private static void YourWorkers()
+        {
+            Display.WithDelayAndColor(Vars.workersTitle, Vars.secondaryColor, false, 0);
+            Vars.mainApp = ConfigJSON.ReadAndDeserialize<AppJSON.App>(1);
+
+            int number = Vars.mainApp!.APIs!.monerodorg!.response!.minerIdentifiers!.Count;
+
+            Display.WithDelayAndColor($"Active workers: {number}", Vars.secondaryColor);
+            Display.WithDelayAndColor($"Workers: \n", Vars.secondaryColor);
+            foreach(var worker in Vars.mainApp!.APIs!.monerodorg!.response!.minerStatsAllworkers!.Workers!)
+            {
+                if (worker.Key == "global")
+                    continue;
+
+                double invalidShares = worker.Value.invalidShares, validShares = worker.Value.validShares;
+                double minerHashrate = Vars.mainApp!.APIs!.monerodorg!.response!.minerStats!.hash!;
+
+                Display.WithDelayAndColor($"{worker.Key} \t {Math.Round(worker.Value.hash / minerHashrate * 100, 4)} % of your hashrate", Vars.secondaryColor);
+                Display.WithDelayAndColor($"Hashrate: \t {(int)worker.Value.hash} H/s \t {Math.Round(worker.Value.hash/Math.Pow(10, 3), 4)} kH/s", Vars.secondaryColor);
+                Display.WithDelayAndColor($"Total hashes: {(ulong)worker.Value.totalHash} / {(ulong)worker.Value.totalHash/Math.Pow(10, 3)} kH / {(ulong)worker.Value.totalHash/Math.Pow(10, 6)} MH / {(ulong)worker.Value.totalHash/Math.Pow(10, 9)} GH", Vars.secondaryColor);
+                Display.WithDelayAndColor($"Valid shares: {validShares} \t Success rate of {Math.Round((-1)*(invalidShares / validShares * 100 - 100), 4)}", Vars.secondaryColor);
+                Display.WithDelayAndColor($"Invalid shares: {invalidShares}\n", Vars.secondaryColor);
+            }
+                
+            ConfigJSON.SerializeAndWrite(1, Vars.mainApp);
         }
         private static void PoolInformation()
         {
@@ -601,6 +627,15 @@ class Program
   \ \  \___|\ \  \\\  \ \  \\\  \ \  \____  
    \ \__\    \ \_______\ \_______\ \_______\
     \|__|     \|_______|\|_______|\|_______|"; 
+        public static string workersTitle = @"
+ ___       __   ________  ________  ___  __    _______   ________  ________      
+|\  \     |\  \|\   __  \|\   __  \|\  \|\  \ |\  ___ \ |\   __  \|\   ____\     
+\ \  \    \ \  \ \  \|\  \ \  \|\  \ \  \/  /|\ \   __/|\ \  \|\  \ \  \___|_    
+ \ \  \  __\ \  \ \  \\\  \ \   _  _\ \   ___  \ \  \_|/_\ \   _  _\ \_____  \   
+  \ \  \|\__\_\  \ \  \\\  \ \  \\  \\ \  \\ \  \ \  \_|\ \ \  \\  \\|____|\  \  
+   \ \____________\ \_______\ \__\\ _\\ \__\\ \__\ \_______\ \__\\ _\ ____\_\  \ 
+    \|____________|\|_______|\|__|\|__|\|__| \|__|\|_______|\|__|\|__|\_________\
+                                                                     \|_________|";
     }
     static class Display
     {
