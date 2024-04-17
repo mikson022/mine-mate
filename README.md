@@ -77,6 +77,6 @@ This project is licensed under the MIT License.
 
 If you find Mine-Mate helpful, consider supporting me/its development:
 ```
-8BSH3XWeNhXMWhbbF4Y7KNDk61DVXfuwGdX4YbVJA8xw52ohbVcdbtMPgg27XfJ3QSYS8mxaQtVfr3QBYaRY8Fcz8iqy8z3
+884Pjeq7L7n7cCciVnjZuS9dbXj86GqkCKKes4REg9RK2cvhjRNZVUXHsr7WWS3cCtWag48N9ASJe5QzRoyWJM4VJEG7Gje
 ```
 
